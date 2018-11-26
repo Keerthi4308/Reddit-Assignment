@@ -2,12 +2,14 @@ import operator
 import collections
 cnt = collections.Counter()
 import json
+import pandas as pd
 
 ####Q1 : top100 subreddit with unique users
 
-filename = '/l/research/social-media-mining/public/RC_2015-01-random-sample-1000000.jsonlines'
+inputfile = '/l/research/social-media-mining/public/RC_2015-01-random-sample-1000000.jsonlines'
+outputfile="reddit-statistics.csv"
 posts = []
-with open(filename) as fh:
+with open(inputfile) as fh:
     for line in fh:
         line_dict = json.loads(line)
         posts.append(line_dict)
@@ -30,6 +32,10 @@ top_100 = sort[:100]
 top_100_dict = { i[0] : i[1]  for i in top_100 }
 #print (top_100_dict)
 
+dt=pd.DataFrame.from_dict(top_100_dict, orient='index', columns=['top_100'])
+#print(dt)
+dt.to_csv(outputfile, sep='\t')
+
 ####Q2 %content for each subreddit in top100
 
 content = {}
@@ -46,7 +52,11 @@ for key,value in content.items():
     value=value/total
     content[key]=value
 
-print (content)
+dt=pd.DataFrame.from_dict(content, orient='index', columns=['content_percent'])
+#print(dt)
+dt.to_csv(outputfile, sep='\t', mode='a')
+
+#print (content)
 
 # ####Q3 #comments/comment+submission (not mandatory)
 
